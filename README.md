@@ -4,7 +4,7 @@ A web application built with React and TypeScript that allows users to record, v
 
 The app uses Zustand for state management, Ant Design for UI components, and Framer Motion for animations, creating a seamless and visually appealing experience. Data persists through Zustand's storage mechanism, ensuring dreams are saved across sessions.
 
-![Dream Map Screenshot](https://raw.githubusercontent.com/trenches022/dream-map/main/assets/dream-map-screenshot2.png)
+![Dream Map Screenshot](https://raw.githubusercontent.com/trenches022/dream-map/main/assets/dream-map-screenshot3.png)
 
 #  Key Features
 
@@ -48,6 +48,6 @@ The app uses Zustand for state management, Ant Design for UI components, and Fra
 * Animated Background: A starry night background with a gradient from deep blue to dark purple, featuring falling stars animated via Canvas.
 * Interactive UI: Use the React Flow controls to zoom and pan the graph, or drag nodes to reposition them.
 
-![Dream Map Screenshot](https://raw.githubusercontent.com/trenches022/dream-map/main/assets/dream-map-screenshot2.png)
-![Dream Map Screenshot](https://raw.githubusercontent.com/trenches022/dream-map/main/assets/dream-map-screenshot.png)
-![Dream Map Screenshot](https://raw.githubusercontent.com/trenches022/dream-map/main/assets/dream-map-screenshot1.png)
+![Dream Map Screenshot](https://raw.githubusercontent.com/trenches022/dream-map/main/assets/dream-map-screenshot3.png)
+![Dream Map Screenshot](https://raw.githubusercontent.com/trenches022/dream-map/main/assets/dream-map-screenshot4.png)
+![Dream Map Screenshot](https://raw.githubusercontent.com/trenches022/dream-map/main/assets/dream-map-screenshot5.png)
