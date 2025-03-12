@@ -46,36 +46,56 @@ const DreamGraph: React.FC = () => {
     const newEdges: DreamEdge[] = [];
 
     const centerX = window.innerWidth / 2;
-    const baseY = window.innerHeight / 2;
+    const centerY = window.innerHeight / 2;
 
     dreams.forEach((dream, index) => {
-      const y = baseY + index * 150;
+      let x, y;
+      if (index === 0) {
+        x = centerX - 300;
+        y = centerY;
+      } else if (index === 1) {
+        x = centerX + 300;
+        y = centerY;
+      } else {
+        x = centerX + 300 + (index - 1) * 200;
+        y = centerY;
+      }
       newNodes.push({
         id: `dream-${dream.id}`,
         type: 'dreamNode',
         data: { label: dream.description, dream },
-        position: { x: centerX - 100, y }, 
+        position: { x, y },
       });
     });
 
     tags.forEach((tag, index) => {
-      const y = baseY - 200 - index * 50; 
-      newNodes.push({
-        id: `tag-${tag}`,
-        type: 'tagNode',
-        data: { label: tag, tag },
-        position: { x: centerX - 50, y }, 
-      });
+      const dream = dreams.find((d) => d.tags.includes(tag));
+      if (dream) {
+        const dreamIndex = dreams.indexOf(dream);
+        const xOffset = dreamIndex === 0 ? -200 : dreamIndex === 1 ? 200 : 200 + (dreamIndex - 1) * 200;
+        const yOffset = -150 - (index * 50);
+        newNodes.push({
+          id: `tag-${tag}`,
+          type: 'tagNode',
+          data: { label: tag, tag },
+          position: { x: centerX + xOffset, y: centerY + yOffset },
+        });
+      }
     });
 
     feelings.forEach((feeling, index) => {
-      const y = baseY + dreams.length * 150 + 50 + index * 50; 
-      newNodes.push({
-        id: `feeling-${feeling}`,
-        type: 'feelingNode',
-        data: { label: feeling, feeling },
-        position: { x: centerX - 50, y },
-      });
+      const dream = dreams.find((d) => d.feelings.includes(feeling));
+      if (dream) {
+        const dreamIndex = dreams.indexOf(dream);
+        const xOffset = dreamIndex === 0 ? -200 : dreamIndex === 1 ? 200 : 200 + (dreamIndex - 1) * 200;
+        const yOffset = 150 + (index * 50);
+        newNodes.push({
+          id: `feeling-${feeling}`,
+          type: 'feelingNode',
+          data: { label: feeling, feeling },
+          position: { x: centerX + xOffset, y: centerY + yOffset },
+        });
+      }
     });
 
     dreams.forEach((dream) => {
@@ -104,7 +124,7 @@ const DreamGraph: React.FC = () => {
   }, [dreams, getUniqueTagsAndFeelings, setNodes, setEdges]);
 
   return (
-    <div style={{ width: '100%', height: '100vh' }}>
+    <div style={{ width: '100%', height: '100vh', position: 'relative', zIndex: 1 }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}

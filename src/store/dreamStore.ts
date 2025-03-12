@@ -1,4 +1,5 @@
-import { create } from "zustand";
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import { v4 as uuidv4 } from 'uuid';
 
 export interface IDream {
@@ -15,17 +16,28 @@ interface DreamStore {
   updateDream: (id: string, updatedDream: Partial<IDream>) => void;
 }
 
-export const useDreamStore = create<DreamStore>((set) => ({
-  dreams: [],
-  addDream: (dream) => set((state) => ({ 
-    dreams: [...state.dreams, { ...dream, id: uuidv4() }] 
-  })),
-  removeDream: (id) => set((state) => ({ 
-    dreams: state.dreams.filter((dream) => dream.id !== id) 
-  })),
-  updateDream: (id, updatedDream) => 
-    set((state) => ({
-      dreams: state.dreams.map((dream) => 
-        dream.id === id ? { ...dream, ...updatedDream } : dream)
-    }))
-}));
+export const useDreamStore = create<DreamStore>()(
+  persist(
+    (set) => ({
+      dreams: [],
+      addDream: (dream) =>
+        set((state) => ({
+          dreams: [...state.dreams, { ...dream, id: uuidv4() }],
+        })),
+      removeDream: (id) =>
+        set((state) => ({
+          dreams: state.dreams.filter((dream) => dream.id !== id),
+        })),
+      updateDream: (id, updatedDream) =>
+        set((state) => ({
+          dreams: state.dreams.map((dream) =>
+            dream.id === id ? { ...dream, ...updatedDream } : dream
+          ),
+        })),
+    }),
+    {
+      name: 'dream-map-storage',
+      storage: createJSONStorage(() => localStorage), 
+    }
+  )
+);
