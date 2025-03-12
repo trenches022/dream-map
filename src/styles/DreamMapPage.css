@@ -6,6 +6,7 @@
   display: flex;
   flex-direction: column;
   position: relative;
+  padding: 20px;
 }
 
 .header {
@@ -52,12 +53,16 @@
 }
 
 .dream-list {
-  padding-left: 1400px;
-  padding-top: 30px;
   text-align: left;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
+  max-width: 300px; 
+  margin-left: auto; 
+  margin-right: 20px; 
+  margin-top: 120px; 
+  z-index: 5; 
+  background: rgba(0, 0, 0, 0.5); 
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 .dream-list h3 {
@@ -75,4 +80,44 @@
   padding: 5px;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dream-list li button {
+  background: none;
+  border: none;
+  color: red;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .dream-list {
+    max-width: 100%;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 150px;
+  }
+
+  .header h1 {
+    font-size: 2rem; 
+  }
+
+  .header h2 {
+    font-size: 1rem;
+  }
+
+  .add-dream-btn {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dream-list {
+    margin-top: 180px; 
+  }
 }
