@@ -4,6 +4,7 @@ import ReactFlow, {
   useNodesState,
   useEdgesState,
   NodeTypes,
+  NodeChange,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { useDreamStore } from '../store/dreamStore';
@@ -19,7 +20,7 @@ const nodeTypes: NodeTypes = {
 };
 
 const DreamGraph: React.FC = () => {
-  const { dreams } = useDreamStore();
+  const { dreams, nodePositions, updateNodePosition } = useDreamStore();
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
@@ -38,6 +39,19 @@ const DreamGraph: React.FC = () => {
     };
   }, [dreams]);
 
+  const handleNodesChange = useCallback(
+    (changes: NodeChange[]) => {
+      onNodesChange(changes);
+      changes.forEach((change) => {
+        if (change.type === 'position' && change.position) {
+          const { id, position } = change;
+          updateNodePosition(id, position.x, position.y); 
+        }
+      });
+    },
+    [onNodesChange, updateNodePosition]
+  );
+
   useEffect(() => {
     if (dreams.length === 0) return;
 
@@ -50,18 +64,24 @@ const DreamGraph: React.FC = () => {
 
     dreams.forEach((dream, index) => {
       let x, y;
-      if (index === 0) {
-        x = centerX - 300;
-        y = centerY;
-      } else if (index === 1) {
-        x = centerX + 300;
-        y = centerY;
+      const nodeId = `dream-${dream.id}`;
+      if (nodePositions[nodeId]) {
+        x = nodePositions[nodeId].x;
+        y = nodePositions[nodeId].y;
       } else {
-        x = centerX + 300 + (index - 1) * 200;
-        y = centerY;
+        if (index === 0) {
+          x = centerX - 300;
+          y = centerY;
+        } else if (index === 1) {
+          x = centerX + 300;
+          y = centerY;
+        } else {
+          x = centerX + 300 + (index - 1) * 200;
+          y = centerY;
+        }
       }
       newNodes.push({
-        id: `dream-${dream.id}`,
+        id: nodeId,
         type: 'dreamNode',
         data: { label: dream.description, dream },
         position: { x, y },
@@ -72,13 +92,22 @@ const DreamGraph: React.FC = () => {
       const dream = dreams.find((d) => d.tags.includes(tag));
       if (dream) {
         const dreamIndex = dreams.indexOf(dream);
-        const xOffset = dreamIndex === 0 ? -200 : dreamIndex === 1 ? 200 : 200 + (dreamIndex - 1) * 200;
-        const yOffset = -150 - (index * 50);
+        const nodeId = `tag-${tag}`;
+        let x, y;
+        if (nodePositions[nodeId]) {
+          x = nodePositions[nodeId].x;
+          y = nodePositions[nodeId].y;
+        } else {
+          const xOffset = dreamIndex === 0 ? -200 : dreamIndex === 1 ? 200 : 200 + (dreamIndex - 1) * 200;
+          const yOffset = -150 - (index * 50);
+          x = centerX + xOffset;
+          y = centerY + yOffset;
+        }
         newNodes.push({
-          id: `tag-${tag}`,
+          id: nodeId,
           type: 'tagNode',
           data: { label: tag, tag },
-          position: { x: centerX + xOffset, y: centerY + yOffset },
+          position: { x, y },
         });
       }
     });
@@ -87,13 +116,22 @@ const DreamGraph: React.FC = () => {
       const dream = dreams.find((d) => d.feelings.includes(feeling));
       if (dream) {
         const dreamIndex = dreams.indexOf(dream);
-        const xOffset = dreamIndex === 0 ? -200 : dreamIndex === 1 ? 200 : 200 + (dreamIndex - 1) * 200;
-        const yOffset = 150 + (index * 50);
+        const nodeId = `feeling-${feeling}`;
+        let x, y;
+        if (nodePositions[nodeId]) {
+          x = nodePositions[nodeId].x;
+          y = nodePositions[nodeId].y;
+        } else {
+          const xOffset = dreamIndex === 0 ? -200 : dreamIndex === 1 ? 200 : 200 + (dreamIndex - 1) * 200;
+          const yOffset = 150 + (index * 50);
+          x = centerX + xOffset;
+          y = centerY + yOffset;
+        }
         newNodes.push({
-          id: `feeling-${feeling}`,
+          id: nodeId,
           type: 'feelingNode',
           data: { label: feeling, feeling },
-          position: { x: centerX + xOffset, y: centerY + yOffset },
+          position: { x, y },
         });
       }
     });
@@ -121,14 +159,14 @@ const DreamGraph: React.FC = () => {
 
     setNodes(newNodes);
     setEdges(newEdges);
-  }, [dreams, getUniqueTagsAndFeelings, setNodes, setEdges]);
+  }, [dreams, getUniqueTagsAndFeelings, nodePositions, setNodes, setEdges]);
 
   return (
     <div style={{ width: '100%', height: '100vh', position: 'relative', zIndex: 1 }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}
-        onNodesChange={onNodesChange}
+        onNodesChange={handleNodesChange} 
         onEdgesChange={onEdgesChange}
         nodeTypes={nodeTypes}
         fitView
